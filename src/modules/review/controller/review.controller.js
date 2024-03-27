@@ -2,6 +2,7 @@ import { handleError } from "../../../middleware/handleAsyncError.js"
 import { deleteOne } from "../../handlers/apiHandle.js"
 import { reviewModel } from "../../../../database/models/reviews.model.js"
 import { appError } from "../../../utilis/appError.js"
+import apiFeatures from "../../../utilis/apiFeature.js"
 
 
 
@@ -17,7 +18,8 @@ const addReview = handleError(async(req,res,next)=>{
     res.json({message:"added",added})
 })
 const getAllReviews = handleError(async (req,res)=>{
-    let allReviews = await reviewModel.find()
+    let apiFeature=    new apiFeatures(reviewModel.find(),req.query).pagination().sort().search().fields()
+    let allReviews = await apiFeature.mongooseQuery.exec()
     res.json({message:"done",allReviews})
 })
 

@@ -2,6 +2,7 @@ import slugify from "slugify"
 import { handleError } from "../../../middleware/handleAsyncError.js"
 import { productModel } from "../../../../database/models/productModel.js"
 import { deleteOne } from "../../handlers/apiHandle.js"
+import apiFeatures from "../../../utilis/apiFeature.js"
 
 
 
@@ -17,64 +18,9 @@ const addProduct = handleError(async(req,res)=>{
     res.json({message:"added",added})
 })
 const getAllProducts = handleError(async (req,res)=>{
-
-   
-    //pagination
-    let page = req.query.page*1 ||1
-    if(req.query.page <=0 ) page =1
-    let skip = (page-1)*4;
-
-    //filters
-    let filterObject = {...req.query}
-    
-    let excutedQuery =['fields','sort','keyword','page']
-    excutedQuery.forEach((q)=>{
-        delete filterObject[q]
-
-    }) 
-    
-    filterObject=JSON.stringify(filterObject)
-    filterObject=filterObject.replace(/\bgt|gte|lt|lte\b/g,match => `$${match}`)
-    filterObject = JSON.parse(filterObject)
-    console.log(filterObject)
-
-    //sort
-
-    //build query
-    let mongooseQuery = productModel.find(filterObject).skip(skip).limit(4)
-    
-    if(req.query.sort){
-        let sortBy = req.query.sort.split(",").join(" ")
-        console.log(sortBy)
-        mongooseQuery.sort(sortBy)
-    }
-    //excute query
-
-    //search
-    if(req.query.keyword){
-        mongooseQuery.find({
-            $or:[
-                {title:{$regex:req.query.keyword,$options:'i'}},
-                {discription:{$regex:req.query.keyword,$options:'i'}},
-
-            ]
-        })
-    }
-
-    //fields
-    if(req.query.fields){
-        
-            const fields = req.query.fields.split(",").join(" ")
-            console.log(fields)
-            mongooseQuery =mongooseQuery.select(fields) 
-        
-        
-         
-    }
-
-
-    let allProducts = await mongooseQuery.exec()
-    res.json({message:"done",page,allProducts})
+let apiFeature=    new apiFeatures(productModel.find(),req.query).pagination().sort().search().fields()
+   let allProducts = await apiFeature.mongooseQuery.exec()
+    res.json({message:"done",page:apiFeature.page,allProducts})
 })
 
 

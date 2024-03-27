@@ -2,6 +2,7 @@ import { cartModel } from "../../../../database/models/cart.model.js"
 import { orderModel } from "../../../../database/models/order.model.js"
 import { productModel } from "../../../../database/models/productModel.js"
 import { handleError } from "../../../middleware/handleAsyncError.js"
+import apiFeatures from "../../../utilis/apiFeature.js"
 import { appError } from "../../../utilis/appError.js"
 import Stripe from 'stripe';
 const stripe = new Stripe(process.env.ORDER_SECRET_KEY);
@@ -38,7 +39,8 @@ const createCashOrder= handleError(async(req,res,next)=>{
 })
 
 const getAllOrders = handleError(async(req,res,next)=>{
-    let orders = await orderModel.find({}).populate('orderItems.product')
+    let apiFeature=    new apiFeatures(orderModel.find().populate('orderItems.product'),req.query).pagination().sort().search().fields()
+    let orders = await apiFeature.mongooseQuery.exec()
     orders && res.json({message:"Done",orders})
     !orders && next(new appError(`order not found`,404))
 
@@ -107,8 +109,6 @@ const createOnlineOrder = handleError(async(request,response,next)=>{
 
 
 
-// nodecourse
-// Q1flaL5aeOWoD6go
 
 
 

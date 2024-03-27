@@ -2,6 +2,7 @@ import slugify from "slugify"
 import { handleError } from "../../../middleware/handleAsyncError.js"
 import { brandModel } from "../../../../database/models/brand.model.js"
 import { deleteOne } from "../../handlers/apiHandle.js"
+import apiFeatures from "../../../utilis/apiFeature.js"
 
 
 
@@ -17,7 +18,8 @@ const addBrand = handleError(async(req,res)=>{
     res.json({message:"added",added})
 })
 const getAllBrands = handleError(async (req,res)=>{
-    let allBrands = await brandModel.find()
+    let apiFeature=    new apiFeatures(brandModel.find(),req.query).pagination().sort().search().fields()
+    let allBrands = await apiFeature.mongooseQuery.exec()
     res.json({message:"done",allBrands})
 })
 

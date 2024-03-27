@@ -3,6 +3,7 @@ import { deleteOne } from "../../handlers/apiHandle.js"
 import { appError } from "../../../utilis/appError.js"
 import { couponModel } from "../../../../database/models/coupon.model.js"
 import  QRCode  from "qrcode"
+import apiFeatures from "../../../utilis/apiFeature.js"
 
 
 const addCoupon = handleError(async(req,res,next)=>{
@@ -17,7 +18,8 @@ const addCoupon = handleError(async(req,res,next)=>{
     res.json({message:"added",added})
 })
 const getAllCoupons = handleError(async (req,res)=>{
-    let allCoupons = await couponModel.find()
+    let apiFeature=    new apiFeatures(couponModel.find(),req.query).pagination().sort().search().fields()
+    let allCoupons = await apiFeature.mongooseQuery.exec()
     res.json({message:"done",allCoupons})
 })
 

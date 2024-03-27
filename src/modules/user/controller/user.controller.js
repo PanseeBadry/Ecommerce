@@ -2,6 +2,7 @@ import { handleError } from "../../../middleware/handleAsyncError.js"
 
 import { deleteOne } from "../../handlers/apiHandle.js"
 import { userModel } from "../../../../database/models/userModel.js"
+import apiFeatures from "../../../utilis/apiFeature.js"
 
 
 
@@ -18,7 +19,8 @@ const addUser = handleError(async(req,res)=>{
     
 })
 const getAllUsers = handleError(async (req,res)=>{
-    let allUsers = await userModel.find()
+    let apiFeature=    new apiFeatures(userModel.find(),req.query).pagination().sort().search().fields()
+    let allUsers = await apiFeature.mongooseQuery.exec()
     res.json({message:"done",allUsers})
 })
 const getUserById = handleError(async(req,res)=>{

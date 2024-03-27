@@ -2,6 +2,7 @@ import { categoryModel } from "../../../../database/models/categoryModel.js"
 import slugify from "slugify"
 import { handleError } from "../../../middleware/handleAsyncError.js"
 import { deleteOne } from "../../handlers/apiHandle.js"
+import apiFeatures from "../../../utilis/apiFeature.js"
 
 
 
@@ -17,8 +18,10 @@ const addCategory = handleError(async(req,res)=>{
     res.json({message:"added",added})
 })
 const getAllCategories = handleError(async (req,res)=>{
-    let allCategories = await categoryModel.find()
-    res.json(allCategories)
+
+    let apiFeature=    new apiFeatures(categoryModel.find(),req.query).pagination().sort().search().fields()
+   let allCategories = await apiFeature.mongooseQuery.exec()
+    res.json({message:"success",allCategories})
 })
 
 

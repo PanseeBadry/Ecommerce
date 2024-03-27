@@ -4,12 +4,13 @@ import { validation } from "../../middleware/validation.js";
 import { addCategorySchema, getCategoryByIdSchema, updateCategorySchema } from "./controller/category.validator.js";
 import { uploadSingle } from "../../utilis/fileUpload.js";
 import { subCategoryRoutes } from "../subCategory/subCategory.route.js";
+import { allowTo, protectedRoutes } from "../auth/auth.controller.js";
 
 export const categoryRoutes = express.Router()
 
 categoryRoutes.use("/:category/subCategory",subCategoryRoutes)
 categoryRoutes.route("/")
-.post(uploadSingle('image'),validation(addCategorySchema),addCategory)
+.post(protectedRoutes,allowTo("admin"),uploadSingle('image'),validation(addCategorySchema),addCategory)
 .get(getAllCategories)
 
 

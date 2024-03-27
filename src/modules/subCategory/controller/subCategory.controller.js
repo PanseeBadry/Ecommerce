@@ -2,6 +2,7 @@ import slugify from "slugify"
 import { handleError } from "../../../middleware/handleAsyncError.js"
 import { subCategoryModel } from "../../../../database/models/subCategory.model.js"
 import { deleteOne } from "../../handlers/apiHandle.js"
+import apiFeatures from "../../../utilis/apiFeature.js"
 
 
 
@@ -22,8 +23,10 @@ const getAllSubCategories = handleError(async (req,res)=>{
     if(req.params.category){
         filterObject.category =req.params.category 
     }
-    let allSubCategories = await subCategoryModel.find(filterObject)
-    res.json(allSubCategories)
+    let apiFeature=    new apiFeatures(subCategoryModel.find(filterObject),req.query).pagination().sort().search().fields()
+    let allSubCategories = await apiFeature.mongooseQuery.exec()
+    
+    res.json({message:"Done",allSubCategories})
 })
 
 

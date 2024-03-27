@@ -11,9 +11,7 @@ export const createOrderSchema = Joi.object({
         phone:Joi.string().trim().required(),
     }).required()
 })
-// export const getSpecificOrderSchema = Joi.object({
-//     id:Joi.string().hex().length(24).required()
-// }) 
+ 
 
 
 

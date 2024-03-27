@@ -1,5 +1,6 @@
 import { userModel } from "../../../../database/models/userModel.js"
 import { handleError } from "../../../middleware/handleAsyncError.js"
+import apiFeatures from "../../../utilis/apiFeature.js"
 
 
 
@@ -20,7 +21,8 @@ const removeAddress = handleError(async(req,res,next)=>{
            
 })
 const getAllAddressess = handleError(async(req,res,next)=>{
-    let userAddress = await userModel.findById(req.user._id)
+    let apiFeature=    new apiFeatures(userModel.findById(req.user._id),req.query).pagination().sort().search().fields()
+    let userAddress = await apiFeature.mongooseQuery.exec()
     res.json({message:"Done",userAddress:userAddress.adressess})
 })
 export{

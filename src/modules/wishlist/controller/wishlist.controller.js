@@ -1,5 +1,6 @@
 import { userModel } from "../../../../database/models/userModel.js"
 import { handleError } from "../../../middleware/handleAsyncError.js"
+import apiFeatures from "../../../utilis/apiFeature.js"
 
 
 
@@ -20,7 +21,9 @@ const removeFromWishlist = handleError(async(req,res,next)=>{
            
 })
 const getAllProductsInWishlist = handleError(async(req,res,next)=>{
-    let userWishlist = await userModel.findById(req.user._id).populate('wishlist')
+   
+    let apiFeature=    new apiFeatures(userModel.findById(req.user._id).populate('wishlist'),req.query).pagination().sort().search().fields()
+    let userWishlist = await apiFeature.mongooseQuery.exec()
     res.json({message:"Done",userWishlist:userWishlist.wishlist})
 })
 export{

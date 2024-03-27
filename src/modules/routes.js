@@ -14,18 +14,18 @@ import { wishlistRoutes } from "./wishlist/wishlist.routes.js"
 
 
 export const allRoutes=(app)=>{
-    app.use("/api/v1/category",categoryRoutes)
-    app.use("/api/v1/subCategory/",subCategoryRoutes)
-    app.use("/api/v1/brand/",brandRoutes)
-    app.use("/api/v1/product",productRoutes)
-    app.use("/api/v1/user",userRoutes)
-    app.use("/api/v1/auth/",authRoutes)
-    app.use("/api/v1/review/",reviewRoutes)
-    app.use("/api/v1/wishlist",wishlistRoutes)
-    app.use("/api/v1/address",addressRoutes)
-    app.use("/api/v1/coupon",couponRoutes)
-    app.use("/api/v1/cart",cartRoutes)
-    app.use("/api/v1/order",orderRoutes)
+    app.use("/api/v1/categories",categoryRoutes)
+    app.use("/api/v1/subCategories",subCategoryRoutes)
+    app.use("/api/v1/brands",brandRoutes)
+    app.use("/api/v1/products",productRoutes)
+    app.use("/api/v1/users",userRoutes)
+    app.use("/api/v1/auth",authRoutes)
+    app.use("/api/v1/reviews",reviewRoutes)
+    app.use("/api/v1/wishlists",wishlistRoutes)
+    app.use("/api/v1/addressess",addressRoutes)
+    app.use("/api/v1/coupons",couponRoutes)
+    app.use("/api/v1/carts",cartRoutes)
+    app.use("/api/v1/orders",orderRoutes)
 
 
 }
