@@ -3,6 +3,7 @@ import { handleError } from "../../../middleware/handleAsyncError.js"
 import { productModel } from "../../../../database/models/productModel.js"
 import { deleteOne } from "../../handlers/apiHandle.js"
 import apiFeatures from "../../../utilis/apiFeature.js"
+import { appError } from "../../../utilis/appError.js"
 
 
 
@@ -25,12 +26,12 @@ let apiFeature=    new apiFeatures(productModel.find(),req.query).pagination().s
 
 
 
-const getProductById = handleError(async(req,res)=>{
+const getProductById = handleError(async(req,res,next)=>{
     let product = await productModel.findById(req.params.id)
     if(product){
         res.json({message:"done",product})
     }else{
-        res.json({message:"product not found"})
+        next(new appError('product not found',404))
     }
    
 })
@@ -44,7 +45,7 @@ const updateProduct = handleError(async(req,res)=>{
     if(req.files.images) req.body.images=req.files.images.map(ele=>ele.filename)
     let updatedProduct = await productModel.findByIdAndUpdate(req.params.id,req.body,{new:true})
     updatedProduct && res.json({message:"done",updatedProduct})
-    !updatedProduct && res.json({message:"product not found"})   
+    !updatedProduct && next(new appError('product not found',404))  
 })
 
 const deleteProduct = deleteOne(productModel)

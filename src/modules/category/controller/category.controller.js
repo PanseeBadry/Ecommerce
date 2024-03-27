@@ -3,6 +3,7 @@ import slugify from "slugify"
 import { handleError } from "../../../middleware/handleAsyncError.js"
 import { deleteOne } from "../../handlers/apiHandle.js"
 import apiFeatures from "../../../utilis/apiFeature.js"
+import { appError } from "../../../utilis/appError.js"
 
 
 
@@ -26,22 +27,22 @@ const getAllCategories = handleError(async (req,res)=>{
 
 
 
-const getCategoryById = handleError(async(req,res)=>{
+const getCategoryById = handleError(async(req,res,next)=>{
     let category = await categoryModel.findById(req.params.id)
     if(category){
         res.json(category)
     }else{
-        res.json({message:"category not found"})
+        next(new appError('category not found',404)) 
     }
    
 })
 
 
-const updateCategory = handleError(async(req,res)=>{
+const updateCategory = handleError(async(req,res,next)=>{
     req.body.slug = slugify(req.body.title)
     let updatedCategory = await categoryModel.findByIdAndUpdate(req.params.id,req.body,{new:true})
     updatedCategory && res.json(updatedCategory)
-    !updatedCategory && res.json({message:"category not found"})   
+    !updatedCategory && next(new appError('category not found',404))   
 })
 
 const deleteCategory = deleteOne(categoryModel)

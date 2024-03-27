@@ -3,6 +3,7 @@ import { handleError } from "../../../middleware/handleAsyncError.js"
 import { deleteOne } from "../../handlers/apiHandle.js"
 import { userModel } from "../../../../database/models/userModel.js"
 import apiFeatures from "../../../utilis/apiFeature.js"
+import { appError } from "../../../utilis/appError.js"
 
 
 
@@ -23,19 +24,19 @@ const getAllUsers = handleError(async (req,res)=>{
     let allUsers = await apiFeature.mongooseQuery.exec()
     res.json({message:"done",allUsers})
 })
-const getUserById = handleError(async(req,res)=>{
+const getUserById = handleError(async(req,res,next)=>{
     let User = await userModel.findById(req.params.id)
     if(User){
         res.json({message:"done",User})
     }else{
-        res.json({message:"User not found"})
+        next(new appError('user not found',404))
     }
    
 })
 const updateUser = handleError(async(req,res)=>{
     let updatedUser = await userModel.findByIdAndUpdate(req.params.id,req.body,{new:true})
     updatedUser && res.json({message:"done",updatedUser})
-    !updatedUser && res.json({message:"User not found"})   
+    !updatedUser && next(new appError('user not found',404))   
 })
 
 const deleteUser =deleteOne(userModel)
@@ -44,7 +45,7 @@ const changePassword = handleError(async(req,res)=>{
     console.log(req.body.changePasswordAt)
     let updatedUser = await userModel.findOneAndUpdate({_id:req.params.id},req.body,{new:true})
     updatedUser && res.json({message:"done",updatedUser})
-    !updatedUser && res.json({message:"User not found"})   
+    !updatedUser && next(new appError('user not found',404))   
 })
 
 

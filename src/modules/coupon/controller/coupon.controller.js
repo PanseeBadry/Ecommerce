@@ -25,13 +25,13 @@ const getAllCoupons = handleError(async (req,res)=>{
 
 
 
-const getCouponById = handleError(async(req,res)=>{
+const getCouponById = handleError(async(req,res,next)=>{
     let coupon = await couponModel.findById(req.params.id)
     let url = await QRCode.toDataURL(coupon.code)
     if(coupon){
         res.json({message:"done",coupon,url})
     }else{
-        res.json({message:"Coupon not found"})
+        next(new appError('coupon not found',404))
     }
    
 })
@@ -42,7 +42,7 @@ const updateCoupon = handleError(async(req,res,next)=>{
         let updatedCoupon = await couponModel.findOneAndUpdate({_id:req.params.id,createdBy:req.user._id},req.body,{new:true})
         
     updatedCoupon && res.json({message:"done",updatedCoupon})
-    !updatedCoupon && res.json({message:"Coupon not found"})  
+    !updatedCoupon && next(new appError('coupon not found',404))
         
     
        

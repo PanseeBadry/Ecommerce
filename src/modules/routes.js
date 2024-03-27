@@ -22,7 +22,7 @@ export const allRoutes=(app)=>{
     app.use("/api/v1/auth",authRoutes)
     app.use("/api/v1/reviews",reviewRoutes)
     app.use("/api/v1/wishlists",wishlistRoutes)
-    app.use("/api/v1/addressess",addressRoutes)
+    app.use("/api/v1/addresses",addressRoutes)
     app.use("/api/v1/coupons",couponRoutes)
     app.use("/api/v1/carts",cartRoutes)
     app.use("/api/v1/orders",orderRoutes)

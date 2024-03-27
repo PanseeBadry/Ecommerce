@@ -3,6 +3,7 @@ import { handleError } from "../../../middleware/handleAsyncError.js"
 import { brandModel } from "../../../../database/models/brand.model.js"
 import { deleteOne } from "../../handlers/apiHandle.js"
 import apiFeatures from "../../../utilis/apiFeature.js"
+import { appError } from "../../../utilis/appError.js"
 
 
 
@@ -25,23 +26,24 @@ const getAllBrands = handleError(async (req,res)=>{
 
 
 
-const getBrandById = handleError(async(req,res)=>{
+const getBrandById = handleError(async(req,res,next)=>{
     let brand = await brandModel.findById(req.params.id)
     if(brand){
         res.json({message:"done",brand})
     }else{
-        res.json({message:"brand not found"})
+        next(new appError('brand not found',404)) 
+
     }
    
 })
 
 
-const updateBrand = handleError(async(req,res)=>{
+const updateBrand = handleError(async(req,res,next)=>{
     req.body.slug = slugify(req.body.title)
     if(req.file) req.body.logo=req.file.filename
     let updatedBrand = await brandModel.findByIdAndUpdate(req.params.id,req.body,{new:true})
     updatedBrand && res.json({message:"done",updatedBrand})
-    !updatedBrand && res.json({message:"brand not found"})   
+    !updatedBrand && next(new appError('brand not found',404))    
 })
 
 const deleteBrand =deleteOne(brandModel)

@@ -31,7 +31,7 @@ const addToCart = handleError(async(req,res,next)=>{
         calcTotalPrice(cart)
         await cart.save()
         cart && res.json({message:"done",cart})
-        !cart && res.json({message:"cart not found"}) 
+        !cart && next(new appError('cart not found',404))  
     }else{
         let item=cartFound.cartItems.find((item)=>item.product==req.body.product)
 
@@ -54,13 +54,13 @@ const removeItemFromCart = handleError(async(req,res,next)=>{
     calcTotalPrice(cart)
     await cart.save()
     cart && res.json({message:"done",cart})
-    !cart && res.json({message:"cart not found"})  
+    !cart && next(new appError('cart not found',404))   
            
 })
 const updateQuantity  = handleError(async(req,res,next)=>{
     
     let cart = await cartModel.findOne({userId:req.user._id})
-    !cart && res.json({message:"cart not found"}) 
+    !cart && next(new appError('cart not found',404))  
     let item= cart.cartItems.find((item)=>item._id == req.params.id)
     let productFound = await productModel.findOne({_id:item.product})
     if(!item) return next(new appError(`item not found`,404)) 
@@ -73,12 +73,12 @@ const updateQuantity  = handleError(async(req,res,next)=>{
 const getUserCart = handleError(async(req,res,next)=>{
     let cart = await cartModel.findOne({userId:req.user._id}).populate('cartItems.product')
     cart && res.json({message:"Done",cart})
-    !cart && res.json({message:"cart not found"})
+    !cart && next(new appError('cart not found',404)) 
 })
 const removeCart = handleError(async(req,res,next)=>{
     let cartRemoved = await cartModel.findOneAndDelete({userId:req.user._id})
     cartRemoved && res.json({message:"Done",cartRemoved})
-    !cartRemoved && res.json({message:"cart not found"})
+    !cartRemoved && next(new appError('cart not found',404)) 
 
 })
 const applyCoupon = handleError(async(req,res,next)=>{

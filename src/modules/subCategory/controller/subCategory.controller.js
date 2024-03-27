@@ -3,6 +3,7 @@ import { handleError } from "../../../middleware/handleAsyncError.js"
 import { subCategoryModel } from "../../../../database/models/subCategory.model.js"
 import { deleteOne } from "../../handlers/apiHandle.js"
 import apiFeatures from "../../../utilis/apiFeature.js"
+import { appError } from "../../../utilis/appError.js"
 
 
 
@@ -31,12 +32,12 @@ const getAllSubCategories = handleError(async (req,res)=>{
 
 
 
-const getSubCategoryById = handleError(async(req,res)=>{
+const getSubCategoryById = handleError(async(req,res,next)=>{
     let subCategory = await subCategoryModel.findById(req.params.id)
     if(subCategory){
         res.json(subCategory)
     }else{
-        res.json({message:"subCategory not found"})
+        next(new appError('subcategory not found',404))
     }
    
 })
@@ -46,7 +47,7 @@ const updateSubCategory = handleError(async(req,res)=>{
     req.body.slug = slugify(req.body.title)
     let updatedSubCategory = await subCategoryModel.findByIdAndUpdate(req.params.id,req.body,{new:true})
     updatedSubCategory && res.json(updatedSubCategory)
-    !updatedSubCategory && res.json({message:"subCategory not found"})   
+    !updatedSubCategory && next(new appError('subcategory not found',404))   
 })
 
 const deleteSubCategory = deleteOne(subCategoryModel)
